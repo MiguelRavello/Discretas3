@@ -7,15 +7,14 @@ using namespace NTL;
 typedef ZZ nat;
 
 nat mcd(nat &a,nat &b){
-    //cout<<"a: "<<a<<" b: "<<b<<endl;
-    if(a==b)
-        return a;
+    if(a==0 || b==0)
+        return a+b;
     else if(a>b){
-        a-=b;
+        a%=b;
         return mcd(a,b);
     }
     else if(b>a){
-        b-=a;
+        b%=a;
         return mcd(a,b);
     }
 }

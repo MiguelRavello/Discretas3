@@ -1,0 +1,74 @@
+\chapter{Algoritmo Euclides Extendido}
+\section{Definición}
+El algoritmo de Euclides extendido permite, además de encontrar un máximo común divisor de dos números enteros  $a\: y\: b$, expresarlo como la mínima combinación lineal de esos números, es decir, encontrar números enteros $s\: y\: t$ tales que $mcd(a,b)=as+bt$. Esto se generaliza también hacia cualquier dominio euclideano. 
+\begin{lstlisting}[language=C++]
+ //Entrada: Valores a y b pertenecientes a un dominio euclideo
+ //Salida: Un MCD de a y b, y los valores s y t tales q 
+ mcd(a,b)=as+bt;
+ r0=a,r1=b,s0=1,t0=0,t1=1,i=0;
+ Mientras ri !=0
+  divida ri-1 entre ri para obtener qi y ri+1
+  si+1 =si-1 - qi*si
+  ti+1 =ti-1 - qi*ti
+  i=i+1
+ Resultado ri-1 es el MCD de a y b
+ se expresa ri-1=a*si-1 + b*ti-1
+\end{lstlisting}
+\subsection{Fundamentos}
+\begin{itemize}
+ \item Usar el algoritmo tradicional de Euclides. En cada paso, en lugar de a dividido entre b es q y de resto r se escribe la ecuación $a = b q + r$
+ \item Se despeja el resto de cada ecuación.
+ \item Se sustituye el resto de la última ecuación en la penúltima, y la penúltima en la antepenúltima y así sucesivamente hasta llegar a la primera ecuación, y en todo paso se expresa cada resto como combinación lineal.
+\end{itemize}
+\section{Implementación}
+\begin{lstlisting}[language=C++]
+nat mcd(nat r1, nat r2){
+  nat s1, s2, t1, t2;
+  s1=1; s2=0; t1=0; t2=1;
+  nat s,r,t,q;
+  s=0,r=0,t=0,q=0;
+  while(r2>0){
+    q=r1/r2;
+    r=r1-q*r2;
+    r1=r2;                                                           
+    r2=r;                                                            
+    s=s1-q*s2;                                                       
+    s1=s2;                                                           
+    s2=s;                                                            
+    t=t1-q*t2;                                                       
+    t1=t2;                                                           
+    t2=t;                                                            
+  }
+  return r1;} 
+\end{lstlisting}
+\section{Seguimiento del algoritmo}
+\begin{center}
+\begin{sideways}
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
+\hline
+r1&r2&r&q&s&s1&s2&t&t1&t2\\\hline
+4294967295&3294967290&0&0&0&1&0&0&0&1\\\hline
+3294967290&1000000005&1000000005&1&1&0&1&-1&1&-1\\\hline
+1000000005&294967275&294967275&3&-3&1&-3&4&-1&4\\\hline
+294967275&115098180&115098180&3&10&-3&10&-13&4&-13\\\hline
+115098180&64770915&64770915&2&-23&10&-23&30&-13&30\\\hline
+64770915&50327265&50327265&1&33&-23&33&-43&30&-43\\\hline
+50327265&14443650&14443650&1&-56&33&-56&73&-43&73\\\hline
+14443650&6996315&6996315&3&201&-56&201&-262&73&-262\\\hline
+6996315&451020&451020&2&-458&201&-458&597&-262&597\\\hline
+451020&231015&231015&15&7071&-458&7071&-9217&597&-9217\\\hline
+231015&220005&220005&1&-7529&7071&-7529&9814&-9217&9814\\\hline
+220005&11010&11010&1&14600&-7529&14600&-19031&9814&-19031\\\hline
+11010&10815&10815&19&-284929&14600&-284929&371403&-19031&371403\\\hline
+10815&195&195&1&299529&-284929&299529&-390434&371403&-390434\\\hline
+195&90&90&55&-16759024&299529&-16759024&21845273&-390434&21845273\\\hline
+90&15&15&2&33817577&-16759024&33817577&-44080980&21845273&-44080980\\\hline
+15&0&0&6&-219664486&33817577&-219664486&286331153&-44080980&286331153\\\hline
+\end{tabular}
+\end{sideways}
+\end{center}
+
+
+
+
+

@@ -1,0 +1,144 @@
+\chapter{Algoritmo Binario de Euclides}
+\section{Definición}
+El algoritmo binario de euclides opera con la misma idea , de cambiar mcd(a,b) por el mcd de dos numeros eventualmente pequeños , solo que esta vez solo restaremos y dividimos.\\
+Este algoritmo opera con los siguientes teoremas:
+\begin{itemize}
+ \item Si a,b son pares, $mcd(a,b) = 2 mcd(a/2,b/2)$.
+ \item Si a es par y b impar o viceversa, $mcd(a,b) = mcd(a/2,b)\: o\: mcd(a, b/2)$.
+ \item Si a,b son impares , $mcd(a,b) = mcd(|a-b|/2, r)$, donde $r = min{a,b}$;
+\end{itemize}
+\begin{lstlisting}[language=C++]
+Algoritmo binario para el mcd
+Datos: a, b e Z, a >= 0, b > 0
+Salida: mcd ( a, b )
+    g = 1;
+    while a mod 2 = 0 And b mod 2 = 0 do
+         a = quo ( a, 2 ) , b = quo ( b, 2 ) ;
+         g = 2<<g //removiendo potencias de 2
+    while a  = 0 do // Ahora, a o b es impar
+      if a mod 2 = 0 then
+          a = quo ( a, 2 )
+      else if b mod 2 = 0 then
+          b = quo ( b, 2 )
+      else ; // ambos impares  
+          t = quo (| a − b | , 2 ) ;
+          if a >= b then ; // reemplazamos máx { a, b } con quo (| a - b | , 2 )
+             a = t
+          else
+             b = t
+    return g*b;  
+\end{lstlisting}
+\section{Implementación}
+\begin{lstlisting}[language=C++]
+#include<NTL/ZZ.h>
+#include<omp.h>
+#include<cmath>
+using namespace std;
+using namespace NTL;
+
+using nat = ZZ;
+
+nat dividir2(nat);
+nat multiplicar2(nat);
+nat GCD(nat &, nat &);
+int main(){
+   const double startTime = omp_get_wtime();
+   nat a, b,c;
+   a = 768454923;
+   b = 542167814;
+   SetBit(a,63);
+   SetBit(b,63);
+   c = GCD(a,b);
+   cout << c << endl;
+   const double endTime = omp_get_wtime();
+   printf("Duration = %lf seconds\n", (endTime - startTime));
+   return 0;
+}
+nat dividir2(nat  a){
+   return a >> 1 ;
+}
+nat multiplicar2(nat a){
+   return a << 1;
+}
+nat GCD(nat &a, nat &b){
+   nat result, t,g;
+   result = 0,g = 1,t = 0;
+   while(( a % 2 == 0) && (b % 2 == 0)){
+      a = dividir2(a);
+      b = dividir2(b);
+      g = multiplicar2(g);
+   }
+   while( a != 0 ){
+      if (a % 2 == 0)
+         a = dividir2(a);
+      else{
+         if(b % 2 == 0)
+            b = dividir2(b);
+         else{
+            t = dividir2( abs(a-b) );
+            if (a >= b)
+               a = t;
+            else
+               b = t;
+         }
+      }
+   }
+   result = g * b;
+   return result;
+}
+\end{lstlisting}
+\section{Seguimiento del algoritmo}
+\begin{longtable}{c|c|c|c}
+% aquí añadimos el encabezado de la primera hoja.
+\hline
+i & a &  b & t \\
+\hline \hline
+\endfirsthead
+% aquí añadimos el encabezado del resto de hojas.
+\hline
+i & a & b & t \\
+\hline \hline
+\endhead
+% aquí añadimos el fondo de todas las hojas, excepto de la última.
+\multicolumn{4}{c}{Sigue en la página siguiente.}
+\endfoot
+% aquí añadimos el fondo de la última hoja.
+\endlastfoot
+1&4294967295&3294967290&0\\\hline
+2&4294967295&1647483645&0\\\hline
+3&1323741825&1647483645&1323741825\\\hline
+4&1323741825&161870910&161870910\\\hline
+5&1323741825&80935455&161870910\\\hline
+6&621403185&80935455&621403185\\\hline
+7&270233865&80935455&270233865\\\hline
+8&94649205&80935455&94649205\\\hline
+9&6856875&80935455&6856875\\\hline
+10&6856875&37039290&37039290\\\hline
+11&6856875&18519645&37039290\\\hline
+12&6856875&5831385&5831385\\\hline
+13&512745&5831385&512745\\\hline
+14&512745&2659320&2659320\\\hline
+15&512745&1329660&2659320\\\hline
+16&512745&664830&2659320\\\hline
+17&512745&332415&2659320\\\hline
+18&90165&332415&90165\\\hline
+19&90165&121125&121125\\\hline
+20&90165&15480&15480\\\hline
+21&90165&7740&15480\\\hline
+22&90165&3870&15480\\\hline
+23&90165&1935&15480\\\hline
+24&44115&1935&44115\\\hline
+25&21090&1935&21090\\\hline
+26&10545&1935&21090\\\hline
+27&4305&1935&4305\\\hline
+28&1185&1935&1185\\\hline
+29&1185&375&375\\\hline
+30&405&375&405\\\hline
+31&15&375&15\\\hline
+32&15&180&180\\\hline
+33&15&90&180\\\hline
+34&15&45&180\\\hline
+35&15&15&15\\\hline
+\caption{Seguimiento del algoritmo}
+\label{ta:m}
+\end{longtable}

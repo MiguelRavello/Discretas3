@@ -1,0 +1,364 @@
+\chapter{Algoritmo de Dijkstra}
+\section{Definición}
+Dijkstra tiene el siguiente algoritmo:
+\begin{equation*}
+GCD(m,n)=
+ \begin{cases}
+    \quad \qquad m & \text{Si $m=n$}\\
+    GCD(m-n,n) & \text{Si $m>n$}\\
+    GCD(m,n-m) & \text{Si $m<n$}
+ \end{cases}
+\end{equation*}
+
+Se propone los siguientes puntos [1]:
+\begin{enumerate}
+ \item \textquestiondown Por qu\'e? $d=GCD(m,n)=GCD(m-n,n)$
+ \item Si $ d\mid m\: ,\: d\mid n \rightarrow \: d\mid (m-n)$ 
+\end{enumerate}
+Para el punto 2:
+\begin{equation*}
+ \begin{align}
+  d&=GCD(m,n)\: \rightarrow \: d\mid m \:\&\:d\mid n\\
+  if\:&m>n:\\
+  m&=dq_1 \: \& \: n=dq_2 \\
+  \frac{m}{n} &=\frac{q_1}{q_2} \: \rightarrow \: q_1>q_2
+ \end{align}
+\end{equation*}
+Restando $m-n$:
+\begin{equation}
+ m-n=d(q_1-q_2)\: \rightarrow \: d\mid (m-n)
+\end{equation}
+Dado que tenemos:
+\begin{equation}
+ d \mid (m-n) \:\:\&\:\: d\mid n \rightarrow \:d\mid GCD(m-n,n) \\
+\end{equation}
+Para el punto 1 necesitamos tener la siguiente estructura:
+\begin{itemize}
+ \item $a\mid b \:\&\:b\mid a\rightarrow\:a=b$
+\end{itemize}
+Partiendo de la divisibilidad:
+\begin{equation*}
+ \begin{align}
+  d=&GCD(m,n) \rightarrow d\mid m \:\&\: d\mid n \\
+  s=&GCD(m-n,n) \rightarrow s\mid(m-n) \:&\: s\mid n \\
+ \end{align}
+\end{equation*}
+\begin{equation*}
+ \begin{align}
+  m-n&=sq_3\\
+  n&=sq_4\\
+  m&=s(q_3+q_4)\\
+  m&=sq_5 \rightarrow s\mid m
+ \end{align}
+\end{equation*}
+Dado que:
+\begin{equation}
+  s \mid m \:\:\&\:\: s\mid n \rightarrow \:s\mid GCD(m,n) \\
+\end{equation}
+Usando el concepto de la combinaci\'on lineal:
+\begin{equation*}
+ \begin{align}
+  d=GCD(m,n) &\rightarrow d\mid m \:\&\: d\mid n \\
+  d&=mx+ny\\
+  s=GCD(m-n,n) &\rightarrow s=(m-n)x+ny \\
+  s=mx+n(y-x) &\rightarrow s\mid m \:\&\: s\mid n 
+ \end{align}
+\end{equation*}
+\begin{equation}
+ s\mid GCD(m,n)
+\end{equation}
+Para hacer uso de la esta propiedad: 
+\begin{equation*}
+ a\mid b \:\&\:b\mid a\rightarrow\:a=b
+\end{equation*}
+Usaremos (2) y (4):
+\begin{equation*}
+ \begin{align}
+  d&=GCD(m,n) \:\&\: s=GCD(m-n,n)\\
+  d&\mid GCD(m-n,n)\\
+  s&\mid GCD(m,n) \\
+  d&\mid s \:\&\:s\mid d\rightarrow\:d=s 
+ \end{align}
+\end{equation*}
+Por lo tanto:
+\begin{equation}
+ GCD(m-n,n)=GCD(m,n)
+\end{equation}
+Para el caso de $m<n$ por extenci\'on se repiten los pasos anteriores y obtenemos:
+\begin{equation}
+ GCD(m,n-m)=GCD(m,n)
+\end{equation}
+
+\section{Implementaci\'on}
+\subsection{Implementaci\'on basica:}
+Es tomada directamente del algoritmo de Dijkstra sin modificaci\'on:
+\begin{lstlisting}[language=C++]
+#include<NTL/ZZ.h>
+#include<omp.h>
+#include<cstdio>
+using namespace std;
+using namespace NTL;
+typedef ZZ nat;
+nat mcd(nat &m,nat &n){
+    if(m==n)
+        return m;
+    else if(m>n)
+        return mcd(m-n,n);
+    else if(n>m)
+        return mcd(m,n-m);
+}
+int main(){
+    printf("- Simply count elapsed time (CountTime) -\n");
+    const double startTime = omp_get_wtime();
+    nat a,b,c;
+    a=4294967295;
+    b=3294967290;
+    int k,q;
+    SetBit(a,31); //Seteamos a 32
+    SetBit(b,31);
+    k=NumBits(a); //Verificamos los bits usados
+    q=NumBits(b);
+    c=mcd(a,b);
+    cout<<"mcd: "<<c<<endl;
+    cout<<"los bits de a: "<<k<<endl
+    cout<<"los bits de b: "<<q<<endl;
+    cout<<"los bytes de a: "<<sizeof(a)<<endl;
+    cout<<"los bytes de b: "<<sizeof(b)<<endl;
+    const double endTime = omp_get_wtime();
+    printf("Duration = %lf seconds\n", (endTime-startTime));
+    printf("-------------------------------------------\n");
+    return 0;
+}
+\end{lstlisting}
+\subsection{Seguimiento del algoritmo:}
+En la siguiente tabla vemos las restas sucesivas entre $m\:y\:n$, donde $i$ es el numero de iteraciones hechas.
+\begin{longtable}{c|c|c|c}
+% aquí añadimos el encabezado de la primera hoja.
+\hline
+i & m & n & GCD(m,n) \\
+\hline \hline
+\endfirsthead
+% aquí añadimos el encabezado del resto de hojas.
+\hline
+i & m & n & GCD(m,n) \\
+\hline \hline
+\endhead
+% aquí añadimos el fondo de todas las hojas, excepto de la última.
+\multicolumn{4}{c}{Sigue en la página siguiente.}
+\endfoot
+% aquí añadimos el fondo de la última hoja.
+\endlastfoot
+% aquí añadimos el cuerpo de la tabla.
+1&4294967295&3294967290&GCD(m,n)\\\hline
+2&1000000005&3294967290&GCD(m,n)\\\hline
+3&1000000005&2294967285&GCD(m,n)\\\hline
+4&1000000005&1294967280&GCD(m,n)\\\hline
+5&1000000005&294967275&GCD(m,n)\\\hline
+6&705032730&294967275&GCD(m,n)\\\hline
+7&410065455&294967275&GCD(m,n)\\\hline
+8&115098180&294967275&GCD(m,n)\\\hline
+9&115098180&179869095&GCD(m,n)\\\hline
+10&115098180&64770915&GCD(m,n)\\\hline
+11&50327265&64770915&GCD(m,n)\\\hline
+12&50327265&14443650&GCD(m,n)\\\hline
+13&35883615&14443650&GCD(m,n)\\\hline
+14&21439965&14443650&GCD(m,n)\\\hline
+15&6996315&14443650&GCD(m,n)\\\hline
+16&6996315&7447335&GCD(m,n)\\\hline
+17&6996315&451020&GCD(m,n)\\\hline
+18&6545295&451020&GCD(m,n)\\\hline
+19&6094275&451020&GCD(m,n)\\\hline
+20&5643255&451020&GCD(m,n)\\\hline
+21&5192235&451020&GCD(m,n)\\\hline
+22&4741215&451020&GCD(m,n)\\\hline
+23&4290195&451020&GCD(m,n)\\\hline
+24&3839175&451020&GCD(m,n)\\\hline
+25&3388155&451020&GCD(m,n)\\\hline
+26&2937135&451020&GCD(m,n)\\\hline
+27&2486115&451020&GCD(m,n)\\\hline
+28&2035095&451020&GCD(m,n)\\\hline
+29&1584075&451020&GCD(m,n)\\\hline
+30&1133055&451020&GCD(m,n)\\\hline
+31&682035&451020&GCD(m,n)\\\hline
+32&231015&451020&GCD(m,n)\\\hline
+33&231015&220005&GCD(m,n)\\\hline
+34&11010&220005&GCD(m,n)\\\hline
+35&11010&208995&GCD(m,n)\\\hline
+36&11010&197985&GCD(m,n)\\\hline
+37&11010&186975&GCD(m,n)\\\hline
+38&11010&175965&GCD(m,n)\\\hline
+39&11010&164955&GCD(m,n)\\\hline
+40&11010&153945&GCD(m,n)\\\hline
+41&11010&142935&GCD(m,n)\\\hline
+42&11010&131925&GCD(m,n)\\\hline
+43&11010&120915&GCD(m,n)\\\hline
+44&11010&109905&GCD(m,n)\\\hline
+45&11010&98895&GCD(m,n)\\\hline
+46&11010&87885&GCD(m,n)\\\hline
+47&11010&76875&GCD(m,n)\\\hline
+48&11010&65865&GCD(m,n)\\\hline
+49&11010&54855&GCD(m,n)\\\hline
+50&11010&43845&GCD(m,n)\\\hline
+51&11010&32835&GCD(m,n)\\\hline
+52&11010&21825&GCD(m,n)\\\hline
+53&11010&10815&GCD(m,n)\\\hline
+54&195&10815&GCD(m,n)\\\hline
+55&195&10620&GCD(m,n)\\\hline
+56&195&10425&GCD(m,n)\\\hline
+57&195&10230&GCD(m,n)\\\hline
+58&195&10035&GCD(m,n)\\\hline
+59&195&9840&GCD(m,n)\\\hline
+60&195&9645&GCD(m,n)\\\hline
+61&195&9450&GCD(m,n)\\\hline
+62&195&9255&GCD(m,n)\\\hline
+63&195&9060&GCD(m,n)\\\hline
+64&195&8865&GCD(m,n)\\\hline
+65&195&8670&GCD(m,n)\\\hline
+66&195&8475&GCD(m,n)\\\hline
+67&195&8280&GCD(m,n)\\\hline
+68&195&8085&GCD(m,n)\\\hline
+69&195&7890&GCD(m,n)\\\hline
+70&195&7695&GCD(m,n)\\\hline
+71&195&7500&GCD(m,n)\\\hline
+72&195&7305&GCD(m,n)\\\hline
+73&195&7110&GCD(m,n)\\\hline
+74&195&6915&GCD(m,n)\\\hline
+75&195&6720&GCD(m,n)\\\hline
+76&195&6525&GCD(m,n)\\\hline
+77&195&6330&GCD(m,n)\\\hline
+78&195&6135&GCD(m,n)\\\hline
+79&195&5940&GCD(m,n)\\\hline
+80&195&5745&GCD(m,n)\\\hline
+81&195&5550&GCD(m,n)\\\hline
+82&195&5355&GCD(m,n)\\\hline
+83&195&5160&GCD(m,n)\\\hline
+84&195&4965&GCD(m,n)\\\hline
+85&195&4770&GCD(m,n)\\\hline
+86&195&4575&GCD(m,n)\\\hline
+87&195&4380&GCD(m,n)\\\hline
+88&195&4185&GCD(m,n)\\\hline
+89&195&3990&GCD(m,n)\\\hline
+90&195&3795&GCD(m,n)\\\hline
+91&195&3600&GCD(m,n)\\\hline
+92&195&3405&GCD(m,n)\\\hline
+93&195&3210&GCD(m,n)\\\hline
+94&195&3015&GCD(m,n)\\\hline
+95&195&2820&GCD(m,n)\\\hline
+96&195&2625&GCD(m,n)\\\hline
+97&195&2430&GCD(m,n)\\\hline
+98&195&2235&GCD(m,n)\\\hline
+99&195&2040&GCD(m,n)\\\hline
+100&195&1845&GCD(m,n)\\\hline
+101&195&1650&GCD(m,n)\\\hline
+102&195&1455&GCD(m,n)\\\hline
+103&195&1260&GCD(m,n)\\\hline
+104&195&1065&GCD(m,n)\\\hline
+105&195&870&GCD(m,n)\\\hline
+106&195&675&GCD(m,n)\\\hline
+107&195&480&GCD(m,n)\\\hline
+108&195&285&GCD(m,n)\\\hline
+109&195&90&GCD(m,n)\\\hline
+110&105&90&GCD(m,n)\\\hline
+111&15&90&GCD(m,n)\\\hline
+112&15&75&GCD(m,n)\\\hline
+113&15&60&GCD(m,n)\\\hline
+114&15&45&GCD(m,n)\\\hline
+115&15&30&GCD(m,n)\\\hline
+116&15&15&GCD(m,n)\\\hline
+\caption{Seguimiento del algoritmo}
+\label{ta:morse}
+\end{longtable}
+
+\section{Implementaci\'on modificada}
+Del seguimiento del algoritmo, como son restas sucesivas, podemos reducir tales restas, con \emph{modulos} sucesivos, siendo esto un Dijkstra-Euclides.
+\begin{lstlisting}[language=C++]
+#include<NTL/ZZ.h>
+#include<omp.h>
+#include<cstdio>
+using namespace std;
+using namespace NTL;
+typedef ZZ nat;
+nat mcd(nat &m,nat &n){
+    if(m==0 || n==0)
+        return m+n;
+    else if(m>n)
+        return mcd(m%n,n);
+    else if(n>m)
+        return mcd(m,n%m);
+}
+int main(){
+    printf("- Simply count elapsed time (CountTime) -\n");
+    const double startTime = omp_get_wtime();
+    nat a,b,c;
+    a=4294967295;
+    b=3294967290;
+    int k,q;
+    SetBit(a,31); //Seteamos a 32
+    SetBit(b,31);
+    k=NumBits(a); //Verificamos los bits usados
+    q=NumBits(b);
+    c=mcd(a,b);
+    cout<<"mcd: "<<c<<endl;
+    cout<<"los bits de a: "<<k<<endl;
+    cout<<"los bits de b: "<<q<<endl;
+    cout<<"los bytes de a: "<<sizeof(a)<<endl;
+    cout<<"los bytes de b: "<<sizeof(b)<<endl;
+    const double endTime = omp_get_wtime();
+    printf("Duration = %lf seconds\n", (endTime-startTime));
+    printf("-------------------------------------------\n");
+    return 0;
+}
+\end{lstlisting}
+
+\subsection{Seguimiento del codigo}
+\begin{table}[!h]
+\label{tablax}
+\begin{center}
+\begin{tabular}{|c|c|c|}
+\hline 
+i&m&n \\
+\hline
+1&4294967295&3294967290\\\hline
+2&1000000005&3294967290\\\hline
+3&1000000005&294967275\\\hline
+4&115098180&294967275\\\hline
+5&115098180&64770915\\\hline
+6&50327265&64770915\\\hline
+7&50327265&14443650\\\hline
+8&6996315&14443650\\\hline
+9&6996315&451020\\\hline
+10&231015&451020\\\hline
+11&231015&220005\\\hline
+12&11010&220005\\\hline
+13&11010&10815\\\hline
+14&195&10815\\\hline
+15&195&90\\\hline
+16&15&90\\\hline
+17&15&0\\\hline
+\end{tabular}
+\end{center}
+\caption{Iteraciones en Dijkstra-Euclides}
+\end{table}
+En ambos casos se obtiene el mismo $GCD(m,n)=15$, comparando de solo de estas dos implementaciones el tiempo de ejecuci\'on:
+\begin{table}[!h]
+\label{tablax}
+\begin{center}
+\begin{tabular}{|c|c|c|}
+\hline 
+i&Modificado&Dijkstra \\
+\hline
+1&$210\mu s$&$208\mu$ \\ \hline
+2&$208\mu s$&$215\mu$ \\ \hline
+3&$237\mu s$&$240\mu$ \\ \hline
+4&$208\mu s$&$154\mu$ \\ \hline
+5&$235\mu s$&$216\mu$ \\ \hline
+6&$209\mu s$&$219\mu$ \\ \hline
+7&$206\mu s$&$256\mu$ \\ \hline
+8&$235\mu s$&$251\mu$ \\ \hline
+9&$203\mu s$&$237\mu$ \\ \hline
+10&$206\mu s$&$267\mu$ \\ \hline
+\end{tabular}
+\end{center}
+\caption{Comparaci\'on de tiempos de ejecuci\'on}
+\end{table}
+Relativamente el modificado es mejor que el Dijkstra normal, por lo que los datos del Dijkstra-Euclides se usaran para comparar con los otros algoritmos.

@@ -1,0 +1,59 @@
+\chapter{Algoritmo de Euclides clasico}
+
+\section{Definici\'on}
+El algoritmo de Euclides es un m\'etodo antiguo y eficaz para calcular el m\'aximo com\'un divisor (MCD). Fue originalmente descrito por Euclides en su obra Elementos.\\
+El algoritmo de Euclides se basa en la aplicaci\'on sucesiva del siguiente lema:\\ 
+Sean $\:a, b, q, r \:\in\:Z$ tales que: $a = bq + r$ con $\:b > 0\:$ y $\:0 ≤ r < b$. Entonces $\:mcd (a, b) = mcd (b, r)$
+\section{Algoritmo}
+Recordemos que $\:mod(a, b)$ denota el resto de la división de a por b. En este algoritmo, en cada paso $\:r = mod (rn+1, rn)$ donde $\:rn+1 = c$ es el dividendo actual y $\:rn = d$ es el divisor actual.
+Luego se actualiza $\:rn+1 = d$ y $d = r$. El proceso continúa mientras d no se anule.\\
+Datos: $\:a,b \in Z\:/b\neq0$\\
+Salida: $mcd(a,b)$\\
+\begin{equation*}
+ \begin{align}
+  c=&|a|,d=|b|;\\
+  while&\:d\neq0\:do\\
+  r&=mod(c,d);\\
+  c&=d;\\
+  d&=r;\\
+  return&\:mcd(a,b)=|c|;
+ \end{align}
+\end{equation*}
+\section{Seguimiento del codigo}
+\begin{table}[!h]
+\label{tablax}
+\begin{center}
+\begin{tabular}{|c|c|c|}
+\hline 
+i&a&b \\
+\hline
+1&4294967295&3294967290\\\hline
+2&3294967290&1000000005\\\hline
+3&1000000005&294967275\\\hline
+4&294967275&115098180\\\hline
+5&115098180&64770915\\\hline
+6&64770915&50327265\\\hline
+7&50327265&14443650\\\hline
+8&14443650&6996315\\\hline
+9&6996315&451020\\\hline
+10&451020&231015\\\hline
+11&231015&220005\\\hline
+12&220005&11010\\\hline
+13&11010&10815\\\hline
+14&10815&195\\\hline
+15&195&90\\\hline
+16&90&15\\\hline
+17&15&0\\\hline
+\end{tabular}
+\end{center}
+\caption{Seguimiento del codigo}
+\end{table}
+
+\begin{lstlisting}[language=C++]
+ ZZ gcd(ZZ &a, ZZ &b){                         
+         if (b == 0)                             
+           return a;                             
+         a%=b;                                   
+         return gcd(b, a);                       
+ }   
+\end{lstlisting}

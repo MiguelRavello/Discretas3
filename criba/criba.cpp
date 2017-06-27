@@ -1,5 +1,5 @@
 #include"criba.h"
-//k=NumBits(x);
+
 bool div2(const nat &num){
     const nat a(1);
     nat r;
@@ -10,7 +10,6 @@ bool div2(const nat &num){
 }
 bool div3(string xs){
     nat rpta(0);
-    //const nat b(1);
     for(string::iterator it=xs.begin();it!=xs.end();it++){
         string t1;
         t1+=*it;
@@ -26,12 +25,10 @@ bool div3(string xs){
         }
     }
     if(rpta%3==0)
-        return true; //true b=1
-    return false; //false b=0
+        return true;
+    return false;
 }
 bool div5(string xs){
-    //const nat b(1);
-    //string ax=xs.substr(xs.length()-1);
     char ax;
     string::iterator it=xs.end()-1;
     ax=*it;
@@ -40,7 +37,6 @@ bool div5(string xs){
     return false;
 }
 bool div7(string xs){
-    //const nat b(1);
     nat num;
     while(xs.length()>2){
         string ax=xs.substr(xs.length()-1);
@@ -56,7 +52,6 @@ bool div7(string xs){
     return false;
 }
 bool div11(string xs){
-    //nat b(1);
     nat x(0);
     nat y(0);
     string::iterator it=xs.begin();
@@ -66,18 +61,15 @@ bool div11(string xs){
             break;
         if(jt==xs.end())
             break;
-        string t1;
-        string t2;
-        t1+=*it;
-        t2+=*jt;
+        string t1(1,*it);
+        string t2(1,*jt);
         x+=StringToNumber<nat>(t1);
         y+=StringToNumber<nat>(t2);
         it+=2;
         jt+=2;
     }
     if(it!=xs.end()){
-        string t3;
-        t3+=*it;
+        string t3(1,*it);
         x+=StringToNumber<nat>(t3);
     }
     x-=y;
@@ -86,7 +78,6 @@ bool div11(string xs){
     return false;
 }
 bool div13(string xs){
-    //const nat b(1);
     nat num;
     while(xs.length()>2){
         string ax=xs.substr(xs.length()-1);
@@ -102,7 +93,6 @@ bool div13(string xs){
     return false;
 }
 bool div17(string xs){
-    //const nat b(1);
     nat num;
     while(xs.length()>2){
         string ax=xs.substr(xs.length()-1);
@@ -118,7 +108,6 @@ bool div17(string xs){
     return false;
 }
 bool div19(string xs){
-    //const nat b(1);
     nat num;
     while(xs.length()>2){
         string ax=xs.substr(xs.length()-1);
@@ -134,7 +123,6 @@ bool div19(string xs){
     return false;
 }
 bool div29(string xs){
-    //const nat b(1);
     nat num;
     while(xs.length()>2){
         string ax=xs.substr(xs.length()-1);
@@ -150,7 +138,6 @@ bool div29(string xs){
     return false;
 }
 bool div31(string xs){
-    //const nat b(1);
     nat num;
     while(xs.length()>2){
         string ax=xs.substr(xs.length()-1);
@@ -263,22 +250,20 @@ void Hash::llenar(nat numero){
         if(isPrime(n, k))
             push(h,n);
     }
-    //numero=SqrRoot(numero);
     for(nat i(100);i<=numero;i++){
         h=NumBits(i);
         if(div2(i))
             continue;
         string ms=NumberToString(i);
-        /*if(div11(ms))
-            continue;*/
+        bool b;
         vector<bool (*)(string)>::iterator it=funcion.begin();
         while(it!=funcion.end()){
-            if((*it)(ms))
+            if(b=(*it)(ms))
                 break;
             it++;
         }
         if(it!=funcion.end()){
-            if((*it)(ms))
+            if(b)
                 continue;
         }
         if(isPrime(i,k)){
@@ -297,5 +282,3 @@ int main(){
     }*/
     return 0;
 }
-
-

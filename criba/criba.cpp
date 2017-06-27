@@ -258,7 +258,7 @@ void Hash::llenar(nat numero){
 
     nat k(4);
     int32 h;
-    for(nat n(1); n < numero; n++){
+    for(nat n(1); n < 100; n++){
         h=NumBits(n);
         if(isPrime(n, k))
             push(h,n);
@@ -295,18 +295,6 @@ int main(){
     for(vector<nat>::iterator it=v.begin();it!=v.end();it++){
         cout<<*it<<' ';
     }*/
-    /*
-    nat test(1024);
-    string ms=NumberToString(test);
-    string ax = ms.substr(ms.length()-1);
-    nat numer=StringToNumber<nat>(ax);
-    cout<<div11(ms)<<endl;
-    nat k(4);  // Number of iterations
- 
-    cout << "All primes smaller than 100: \n";
-    for (nat n(1); n < 100; n++)
-       if (isPrime(n, k))
-          cout << n << " ";*/
     return 0;
 }
 
